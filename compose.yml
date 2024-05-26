@@ -1,45 +1,41 @@
 services:
+  spark-base:
+    build:
+      context: ./spark-base
+      dockerfile: Dockerfile
+    image: tvrsimhan27/spark-base:${TAG}
+
   spark-master:
-    image: tvrsimhan27/spark-master
-    container_name: spark-master
+    build:
+      context: ./spark-master
+      dockerfile: Dockerfile
+    image: tvrsimhan27/spark-master:${TAG}
     networks:
       - spark-network
-    ports:
-      - "8081:8080"
-    command: ["--attach"]
 
   spark-worker:
-    image: tvrsimhan27/spark-worker
+    build:
+      context: ./spark-worker
+      dockerfile: Dockerfile
+    image: tvrsimhan27/spark-worker:${TAG}
     networks:
       - spark-network
-    environment:
-      MEMORY: 2G
-      CORES: 1
-    deploy:
-      replicas: 1
-    depends_on:
-      - spark-master
 
   spark-submit:
-    image: tvrsimhan27/spark-submit
-    container_name: spark-submit
+    build:
+      context: ./spark-submit
+      dockerfile: Dockerfile
+    image: tvrsimhan27/spark-submit:${TAG}
     networks:
       - spark-network
-    ports:
-      - "4040:4040"
-    command: ["bash"]
-    depends_on:
-      - spark-master
-      - spark-worker
 
   spark-shell:
-    image: tvrsimhan27/spark-shell
-    container_name: spark-shell
+    build:
+      context: ./spark-shell
+      dockerfile: Dockerfile
+    image: tvrsimhan27/spark-shell:${TAG}
     networks:
       - spark-network
-    depends_on:
-      - spark-submit
-    command: ["--attach"]
 
 networks:
   spark-network:
