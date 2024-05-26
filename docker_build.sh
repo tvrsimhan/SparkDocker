@@ -28,14 +28,14 @@ if [ -z "$REPO" ]; then
 fi
 
 # Array of image names
-IMAGES=("spark-base" "spark-master" "spark-worker" "spark-submit")
+IMAGES=("spark-base" "spark-master" "spark-worker" "spark-submit" "spark-shell")
 REPO="tvrsimhan27"
 
 # Function to build and push a Docker image
 build_image() {
     local IMAGE_NAME=$1
     local FULL_IMAGE_NAME="$REPO/$IMAGE_NAME:$TAG"
-    local FULL_IMAGE_NAME_LATEST="$REPO/$IMAGE_NAME:latest"
+    local FULL_IMAGE_NAME_LATEST="${FULL_IMAGE_NAME%:*}":latest
 
     echo "Building Docker image $FULL_IMAGE_NAME..."
     docker build -t $FULL_IMAGE_NAME_LATEST -t $FULL_IMAGE_NAME $IMAGE_NAME
@@ -53,9 +53,11 @@ build_image() {
 
 push_image(){
     local FULL_IMAGE_NAME=$1
+    local FULL_IMAGE_NAME_LATEST="${FULL_IMAGE_NAME%:*}":latest
     
     echo "Pushing Docker image $FULL_IMAGE_NAME..."
     docker push $FULL_IMAGE_NAME
+    docker push $FULL_IMAGE_NAME_LATEST
 
     if [ $? -ne 0 ]; then
         echo "Docker push for $FULL_IMAGE_NAME failed"
