@@ -6,3 +6,5 @@ if [ -z "$N_WORKERS" ]; then
 fi
 
 docker-compose up --scale spark-worker=3 -d && docker-compose run -p 4041:4040 --rm spark-shell
+
+docker-compose down

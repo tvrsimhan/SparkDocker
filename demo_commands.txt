@@ -1,0 +1,18 @@
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
+
+def getRandomData(spark: SparkSession, fromRange:Long = 1, toRange:Long = 1000) = {
+	
+	val inputDF = spark.range(fromRange, toRange)
+
+	val outputDF = inputDF
+		.withColumn("name", concat(lit("name "), $"id"))
+		.withColumn("age", when(col("id") < 101, col("id")).otherwise(($"id" % 100 )))
+		.withColumn("salary", when(col("age") > 60, 500000f).when(col("age") > 40 and col("age") < 60, 350000f).otherwise(200000f))
+		.withColumn("doj", 
+			when(col("age") > 60, to_date(lit("2010-20-01"), "yyyy-dd-mm")).
+			when(col("age") > 40 and col("age") < 60, to_date(lit("2017-20-01"), "yyyy-dd-mm")).
+			otherwise(current_date()))
+
+	outputDF
+}
